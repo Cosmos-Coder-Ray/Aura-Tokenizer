@@ -1,0 +1,38 @@
+1. Project Structure & Goals
+Core: C++ (all tokenizer logic, high performance, reusable in C++ projects)
+Rust Bridge: Use cxx or bindgen to wrap C++ core, expose Rust API, and provide FFI for Python and WASM.
+Python API: Use PyO3/maturin to expose Rust (and thus C++) to Python, ready for PyPI.
+WASM: Use wasm-pack or wasm-bindgen to expose Rust API to JavaScript/WebAssembly.
+Testing: Advanced, professional-level unit and integration tests for all APIs.
+Packaging: PyPI-ready, Rust crate, C++ static/shared lib, WASM npm package.
+2. Migration & Refactor Steps
+Step 1: Remove Cython Bridge and Related Files
+Delete all .pyx, .pxd, and Cython-specific build files.
+Remove Cython dependencies from setup.py, pyproject.toml, and MANIFEST.in.
+Step 2: Refactor C++ Core (if needed)
+Ensure all tokenizer logic is in C++ with a clean, well-documented API.
+Add any missing features you wanted but couldn’t expose via Cython.
+Step 3: Create Rust Bridge
+Use the cxx crate to safely call C++ from Rust.
+Expose all C++ features via Rust structs and functions.
+Write idiomatic Rust wrappers for C++ classes.
+Step 4: Python API with PyO3/maturin
+Use PyO3 and maturin to expose Rust API to Python.
+Write Pythonic wrappers and docstrings.
+Ensure all features are accessible from Python.
+Step 5: WASM Support
+Use wasm-bindgen to expose Rust API to JavaScript/WASM.
+Provide npm packaging for easy JS/TS integration.
+Step 6: Rust and C++ Standalone Use
+Publish as a Rust crate (Cargo).
+Provide C++ headers and static/shared libraries for direct C++ use.
+Step 7: Advanced Testing
+Write comprehensive unit and integration tests in Rust (for core logic).
+Write Python tests (pytest) for the Python API.
+Write JS/TS tests for WASM.
+Include fuzzing and property-based tests for robustness.
+Step 8: Packaging & Distribution
+PyPI: maturin build, with wheels for all major platforms.
+Rust: publish to crates.io.
+WASM: publish to npm.
+C++: provide installable headers/libs.

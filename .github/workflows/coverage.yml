@@ -1,0 +1,133 @@
+name: Code Coverage
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  MIN_COVERAGE: 80
+
+jobs:
+  coverage:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ['3.8', '3.9', '3.10', '3.11']
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+        fetch-depth: 0
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y lcov llvm clang-tools cmake ninja-build
+        sudo apt-get install -y libicu-dev
+
+    - name: Set up Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+        components: llvm-tools-preview
+
+    - name: Install cargo-llvm-cov
+      uses: taiki-e/install-action@cargo-llvm-cov
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.10'
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install pytest pytest-cov gcovr
+
+    - name: Build with coverage instrumentation
+      run: |
+        # C++ coverage build
+        mkdir build && cd build
+        cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_COVERAGE=ON ..
+        cmake --build .
+        cd ..
+        
+        # Rust coverage build
+        cargo llvm-cov clean --workspace
+        RUSTFLAGS="-C instrument-coverage" cargo build --workspace
+
+    - name: Run C++ tests with coverage
+      working-directory: build
+      run: |
+        ctest --output-on-failure
+        lcov --capture --directory . --output-file coverage.info
+        lcov --remove coverage.info '/usr/*' --output-file coverage.info
+        lcov --list coverage.info
+
+    - name: Run Rust tests with coverage
+      run: |
+        cargo llvm-cov --workspace --lcov --output-path rust_coverage.info
+
+    - name: Run Python tests with coverage
+      run: |
+        pytest tests/ --cov=aura_tokenizer --cov-report=xml:python_coverage.xml
+
+    - name: Combine coverage reports
+      run: |
+        # Convert lcov to coverage.xml for C++
+        gcovr --xml coverage.xml build/coverage.info
+        
+        # Merge all coverage reports
+        python -c "
+        import xml.etree.ElementTree as ET
+        import glob
+
+        def merge_coverage_files(files):
+            merged = None
+            for file in files:
+                tree = ET.parse(file)
+                if merged is None:
+                    merged = tree
+                    continue
+                root = tree.getroot()
+                for package in root.findall('.//package'):
+                    merged.getroot().append(package)
+            return merged
+
+        coverage_files = ['coverage.xml', 'rust_coverage.info', 'python_coverage.xml']
+        merged = merge_coverage_files(coverage_files)
+        merged.write('merged_coverage.xml')
+        "
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./merged_coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: true
+        verbose: true
+
+    - name: Check coverage thresholds
+      run: |
+        COVERAGE_THRESHOLD=80
+        
+        # Extract coverage percentage from merged report
+        COVERAGE=$(python -c "
+        import xml.etree.ElementTree as ET
+        tree = ET.parse('merged_coverage.xml')
+        root = tree.getroot()
+        print(float(root.get('line-rate')) * 100)
+        ")
+        
+        if (( $(echo "$COVERAGE < $COVERAGE_THRESHOLD" | bc -l) )); then
+          echo "Coverage ($COVERAGE%) is below threshold ($COVERAGE_THRESHOLD%)"
+          exit 1
+        else
+          echo "Coverage ($COVERAGE%) meets threshold ($COVERAGE_THRESHOLD%)"
+        fi

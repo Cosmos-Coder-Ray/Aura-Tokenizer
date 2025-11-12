@@ -1,0 +1,32 @@
+{
+    "cmake.sourceDirectory": "C:/Users/rstiw/Desktop/AURA/Packages/Aura-Tokenizer/Aura-Tokenizer",
+    "files.associations": {
+        "string": "cpp",
+        "vector": "cpp",
+        "mutex": "cpp",
+        "cstring": "cpp",
+        "cctype": "cpp",
+        "memory": "cpp",
+        "algorithm": "cpp",
+        "functional": "cpp",
+        "initializer_list": "cpp",
+        "iosfwd": "cpp",
+        "iterator": "cpp",
+        "utility": "cpp",
+        "forward_list": "cpp",
+        "map": "cpp",
+        "optional": "cpp",
+        "tuple": "cpp",
+        "unordered_map": "cpp",
+        "valarray": "cpp",
+        "cstddef": "cpp",
+        "stdexcept": "cpp",
+        "array": "cpp",
+        "cstdint": "cpp",
+        "type_traits": "cpp",
+        "regex": "cpp",
+        "numeric": "cpp",
+        "queue": "cpp",
+        "iostream": "cpp"
+    }
+}

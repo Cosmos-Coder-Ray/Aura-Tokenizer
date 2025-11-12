@@ -1,0 +1,31 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 80%    # the required coverage value
+        threshold: 1%  # allow coverage to drop by 1% while still succeeding
+    patch:
+      default:
+        target: 80%    # the required coverage value
+        threshold: 1%  # allow coverage to drop by 1% while still succeeding
+
+  ignore:
+    - "tests/**/*"     # ignore test files
+    - "**/test_*.cpp"
+    - "**/test_*.rs"
+    - "**/*_test.cpp"
+    - "**/*_test.rs"
+    - "Dependencies/**/*"
+
+parsers:
+  gcov:
+    branch_detection:
+      conditional: yes
+      loop: yes
+      method: no
+      macro: no
+
+comment:
+  layout: "reach, diff, flags, files"
+  behavior: default
+  require_changes: true

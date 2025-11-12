@@ -1,0 +1,48 @@
+# GitHub Actions workflow for WASM build
+name: WASM Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-wasm:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup Emscripten
+      uses: mymindstorm/setup-emsdk@v12
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake ninja-build pkg-config
+
+    - name: Configure CMake
+      working-directory: ${{github.workspace}}/Aura-Tokenizer
+      run: |
+        mkdir build_wasm
+        cd build_wasm
+        emcmake cmake .. -G Ninja \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DBUILD_WASM=ON
+
+    - name: Build
+      working-directory: ${{github.workspace}}/Aura-Tokenizer/build_wasm
+      run: cmake --build . --config Release
+
+    - name: Create JS directory and copy artifacts
+      working-directory: ${{github.workspace}}/Aura-Tokenizer
+      run: |
+        mkdir -p js
+        cp build_wasm/aura_tokenizer* js/
+
+    - name: Upload WASM artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: wasm-build
+        path: ${{github.workspace}}/Aura-Tokenizer/js/

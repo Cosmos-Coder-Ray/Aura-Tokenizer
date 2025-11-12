@@ -1,0 +1,5 @@
+include README.md
+include LICENSE
+## Cython sources removed
+recursive-include Aura-Tokenizer/include *.h
+recursive-include docs * 

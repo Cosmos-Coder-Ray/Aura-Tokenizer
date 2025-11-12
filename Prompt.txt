@@ -1,0 +1,341 @@
+﻿Aura Tokenizer: The Subatomic Particle of Language
+Aura Tokenizer is an ultra-high-performance, next-generation subword tokenization library, engineered from the ground up in C++ for maximum efficiency and bound to Python with Cython. It is designed not merely to process text, but to understand its structure, providing a more intelligent and adaptable foundation for Large Language Models and advanced AI systems.
+
+It moves beyond the static, one-size-fits-all approach of traditional tokenizers, introducing adaptive learning, contextual awareness, and unparalleled performance to become the definitive choice for training, inference, and research.
+
+filozofia (Core Philosophy)
+Our philosophy is that the tokenizer is not a preprocessing utility; it is the first layer of linguistic comprehension in an AI model. An optimal tokenization strategy is critical for model performance, efficiency, and even interpretability. Aura is built on three pillars:
+
+Performance at Scale: Sub-millisecond latency and massive throughput are non-negotiable. We leverage modern C++, multithreading, and hardware-native data structures to eliminate bottlenecks.
+
+Semantic Precision: Go beyond simple character matching. Aura is designed with future-facing features to understand linguistic boundaries, context, and domain-specific jargon for more meaningful token splits.
+
+Unbreakable Extensibility: A modular, pluggable architecture allows researchers and engineers to experiment with novel normalization techniques, pre-tokenization rules, and post-processing steps without ever touching the core engine.
+
+🚀 Why Aura Tokenizer? The Next-Generation Difference
+Aura isn't just another tokenizer; it's a fundamental rethink of how text is fed to models.
+
+Feature Area
+
+Aura Tokenizer (Next-Gen)
+
+Hugging Face Tokenizers
+
+Google SentencePiece
+
+OpenAI Tiktoken
+
+Core Engine
+
+🧠 Hardware-Native C++ & Cython. Zero-copy data flow. SIMD-optimized.
+
+Rust core with Python wrappers.
+
+Self-contained C++.
+
+Optimized Rust core.
+
+Adaptability
+
+💡 Adaptive Vocabulary. Can dynamically merge/expand vocab during training.
+
+Static, pre-trained vocabularies.
+
+Static vocabulary.
+
+Static, model-specific.
+
+Context
+
+🌐 Contextual Engine (Experimental). Aims to resolve tokenization ambiguity based on surrounding text.
+
+Stateless.
+
+Stateless.
+
+Stateless.
+
+Interpretability
+
+🔍 Visualization & Confidence Scores. Provides insights into why a merge was chosen.
+
+Limited to offset mapping.
+
+Opaque process.
+
+Opaque process.
+
+Specialization
+
+🔬 Domain-Aware Pre-tokenization. Optimized pipelines for Code, Biology (DNA), and Finance.
+
+Generic pre-tokenizers.
+
+Generic normalization.
+
+Optimized for natural language.
+
+Performance
+
+🏎️ Optimized Double-Array Trie & SIMD. Consistently outperforms competitors in raw encoding/decoding throughput.
+
+Fast, but with Python overhead.
+
+Very fast C++ core.
+
+Extremely fast for its purpose.
+
+Training
+
+🧵 Advanced Multithreading. Lock-free data structures for near-linear scaling with CPU cores.
+
+Good multithreading support.
+
+Single-threaded training.
+
+Not trainable by end-user.
+
+🧩 Feature Matrix
+Core Algorithms & Models
+Feature
+
+Description
+
+Status
+
+BPE (Byte Pair Encoding)
+
+Classic BPE implementation with merge priority queue.
+
+✅ Stable
+
+Unigram
+
+Lossy, probabilistic model based on SentencePiece's implementation.
+
+✅ Stable
+
+WordPiece
+
+The model used by BERT, optimized for prefix/suffix handling.
+
+✅ Stable
+
+Double-Array Trie
+
+Ultra-fast vocabulary lookups, replacing standard hash maps.
+
+✅ Stable
+
+Performance & Architecture
+Feature
+
+Description
+
+Status
+
+C++ Core Engine
+
+Modern C++20 for performance, safety, and portability.
+
+✅ Stable
+
+Cython Bindings
+
+Thin, zero-overhead bindings for a native Python experience.
+
+✅ Stable
+
+Multithreaded Training
+
+Parallel corpus chunking and synchronized vocab updates for massive speedups.
+
+✅ Stable
+
+SIMD Acceleration
+
+Uses AVX2/AVX512/NEON intrinsics for vectorized operations where possible.
+
+🚧 In Progress
+
+WASM Export
+
+Compile the core engine to WebAssembly for browser/Node.js inference.
+
+✅ Stable
+
+State Persistence
+
+Save/load tokenizer state in a single, portable binary file (.aura).
+
+✅ Stable
+
+Data Handling & Pre-processing
+Feature
+
+Description
+
+Status
+
+Unicode Normalization
+
+Deep integration with ICU for robust NFKC/NFC normalization and grapheme-aware splitting.
+
+✅ Stable
+
+Byte-Level Fallback
+
+Guarantees any string can be tokenized by falling back to raw bytes for unknown characters.
+
+✅ Stable
+
+Composable Pipeline
+
+Chainable Normalizers, Pre-Tokenizers, and Post-Processors.
+
+✅ Stable
+
+Specialized Pre-Tokenizers
+
+Pre-built rules for splitting by whitespace, punctuation, and digits, plus advanced rules for code (snake_case, camelCase).
+
+✅ Stable
+
+Offset Mapping
+
+Provides character-to-token and token-to-word mappings for NER and other annotation tasks.
+
+✅ Stable
+
+Tooling & Extensibility
+Feature
+
+Description
+
+Status
+
+Special Tokens
+
+Full support for [PAD], [UNK], [CLS], [SEP], [MASK], and user-defined tokens.
+
+✅ Stable
+
+Batch Processing
+
+High-performance batch encoding/decoding with padding and truncation strategies.
+
+✅ Stable
+
+Python API
+
+Clean, intuitive, and fully documented Python interface.
+
+✅ Stable
+
+Comprehensive Tests
+
+Rigorous testing with Google Test (C++) and unittest (Python).
+
+✅ Stable
+
+Vocabulary Visualization
+
+(Experimental) Tools to inspect merge histories and token distributions.
+
+🔬 Research
+
+🏛️ Architectural Vision
+Aura's architecture is designed for clarity, modularity, and speed.
+
+Input: "Raw text string..."
+       │
+┌──────▼────────┐
+│  Normalizer   │ (e.g., NFKC, lowercase, strip accents)
+└──────┬────────┘
+       │
+┌──────▼────────┐
+│ Pre-tokenizer │ (e.g., Split by whitespace, punctuation)
+└──────┬────────┘
+       │ (Sequence of pre-tokens: ["Raw", "text", "string", "..."])
+       │
+┌──────▼────────┐
+│      Model    │ (BPE, Unigram, or WordPiece core logic)
+└──────┬────────┘
+       │ (Sequence of token IDs: [123, 456, 789, 10])
+       │
+┌──────▼────────┐
+│ Post-Processor│ (e.g., Add [CLS]/[SEP] tokens, create attention mask)
+└───────────────┘
+       │
+Output: Final Model Input (token_ids, attention_mask, offsets)
+
+💻 Usage Example (Python API)
+The Python API is designed to be familiar and powerful.
+
+import Aura-Tokenizer
+
+# 1. Initialize a BPE model
+# The tokenizer is not yet trained.
+tokenizer = aura.Tokenizer(aura.models.BPE())
+
+# 2. Configure the pre-tokenizer and normalizer
+tokenizer.pre_tokenizer = aura.pre_tokenizers.Whitespace()
+tokenizer.normalizer = aura.normalizers.NFKC()
+
+# 3. Train from a large corpus (supports iterators for memory efficiency)
+# trainer is configured for BPE with a target vocab size and special tokens
+trainer = aura.trainers.BpeTrainer(
+    vocab_size=32000,
+    special_tokens=["[PAD]", "[UNK]", "[CLS]", "[SEP]", "[MASK]"]
+)
+corpus_iterator = get_my_huge_corpus_iterator() # Your data loader
+tokenizer.train_from_iterator(corpus_iterator, trainer=trainer)
+
+# 4. Save the trained tokenizer for later use
+# This creates a single portable file with the full configuration.
+tokenizer.save("my-aura-tokenizer.aura")
+
+# --- Later, in your inference script ---
+
+# 5. Load the tokenizer from disk
+loaded_tokenizer = aura.Tokenizer.from_file("my-aura-tokenizer.aura")
+
+# 6. Encode text
+output = loaded_tokenizer.encode("Hello, world! This is the Aura Tokenizer.")
+
+# Access the results
+print(f"Tokens: {output.tokens}")
+# >>> ['[CLS]', 'Hello', ',', 'world', '!', 'This', 'is', 'the', 'Aura', 'Token', 'izer', '.', '[SEP]']
+
+print(f"IDs: {output.ids}")
+# >>> [2, 89, 13, 199, 1, 46, 31, 8, 1042, 2053, 1821, 7, 3]
+
+print(f"Offsets: {output.offsets}")
+# >>> [(0, 0), (0, 5), (5, 6), (7, 12), (12, 13), (14, 18), ... ]
+
+# 7. Batch encoding with padding and truncation
+batch_output = loaded_tokenizer.encode_batch(
+    ["First sentence.", "This is a much longer second sentence."],
+    pad=True,
+    truncate=True,
+    max_length=10
+)
+
+🗺️ Roadmap
+Aura is an actively developed project with an ambitious future.
+
+Quarter
+
+Key Milestones
+
+Q4 2025
+
+<ul><li>GPU-Accelerated Training (CUDA): Port the core training loop to CUDA for orders-of-magnitude speedup on NVIDIA hardware.</li><li>Initial Contextual Model: Release the first experimental version of the context-aware tokenization engine.</li></ul>
+
+Q1 2026
+
+<ul><li>Tokenizer Hub Integration: Tools for easy sharing and discovery of pre-trained Aura tokenizers.</li><li>Advanced Visualization Suite: A standalone tool to analyze vocabulary structure, merge paths, and tokenization ambiguity.</li></ul>
+
+H2 2026
+
+<ul><li>On-the-Fly Vocabulary Merging: APIs to merge two existing tokenizers without a full retrain.</li><li>Tighter Inference Engine Integration: Optimized paths for ONNX Runtime, TensorRT, and other inference accelerators.</li></ul>
