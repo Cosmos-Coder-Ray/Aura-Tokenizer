@@ -1,0 +1,12 @@
+[package]
+name = "aura-tokenizer-python" # A distinct name for the Rust crate
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "aura_tokenizer" # The name of the Python module
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.21.0", features = ["extension-module"] }
+aura-tokenizer = { path = "../Rust/aura-tokenizer" }

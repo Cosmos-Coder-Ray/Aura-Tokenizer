@@ -1,0 +1,20 @@
+[build-system]
+requires = ["maturin>=1.0,<2.0", "setuptools"]
+build-backend = "maturin"
+
+[project]
+name = "aura_tokenizer"
+version = "0.1.0"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+]
+
+[tool.maturin]
+features = ["pyo3/extension-module"]
+module-name = "aura_tokenizer._internal"
+
+[tool.setuptools.packages.find]
+where = ["src"]
