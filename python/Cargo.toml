@@ -1,0 +1,12 @@
+[package]
+name = "aura-tokenizer-py"
+version = "0.1.0"
+edition = "2025"
+
+[lib]
+name = "aura_tokenizer"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.20", features = ["extension-module", "abi3-py38"] }
+aura-tokenizer = { path = "../rust" }

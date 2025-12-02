@@ -116,6 +116,19 @@ namespace auratokenizer {
          * Load the tokenizer state from disk.
          */
         void load(const std::string& path);
+        
+        // Added for FFI
+        size_t get_vocab_size() const;
+        int token_to_id(const std::string& token) const;
+        std::string id_to_token(int id) const;
+        void train(const std::vector<std::string>& files, size_t vocab_size);
+
+        // Configuration methods
+        void set_normalization_form(NormalizationForm form);
+        void set_strip_accents(bool strip);
+        void set_lowercase(bool lowercase);
+        void add_pre_tokenizer_pattern(const std::string& pattern);
+        void create_bert_post_processor(bool add_special_tokens);
 
     private:
         TokenizerConfig config_;

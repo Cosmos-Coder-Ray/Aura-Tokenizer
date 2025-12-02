@@ -5,6 +5,8 @@
 #include "char_level_tokenizer.h"
 #include "wordpiece_tokenizer.h"
 #include "wordpiece_model.h"
+#include "bpe_trainer.h"
+#include "unigram_trainer.h"
 
 #include <fstream>
 #include <numeric>
@@ -220,6 +222,94 @@ namespace auratokenizer {
 
     void TokenizerAdvanced::load(const std::string& path) {
         throw TokenizerException("TokenizerAdvanced::load not implemented yet.");
+    }
+
+    size_t TokenizerAdvanced::get_vocab_size() const {
+        return vocab_->size();
+    }
+
+    int TokenizerAdvanced::token_to_id(const std::string& token) const {
+        return vocab_->get_token_id(token);
+    }
+
+    std::string TokenizerAdvanced::id_to_token(int id) const {
+        return vocab_->get_token(id);
+    }
+
+    void TokenizerAdvanced::train(const std::vector<std::string>& files, size_t vocab_size) {
+        auto algo = model_->get_algorithm();
+        if (algo == TokenizationAlgorithm::BPE) {
+            BPETrainer trainer(config_);
+            trainer.set_vocab_size(vocab_size);
+            trainer.train_from_files(files, vocab_);
+            
+            // Update model merges
+            // Note: BPETrainer returns pairs, model expects strings. We need to format them.
+            // Assuming standard "token1 token2" format for now.
+            for (const auto& rule : trainer.get_merge_rules()) {
+                model_->add_merge(rule.first + " " + rule.second);
+            }
+        } else if (algo == TokenizationAlgorithm::UNIGRAM) {
+            UnigramTrainer trainer(config_);
+            // Unigram trainer usually determines vocab size automatically or via max_tokens
+            // trainer.set_max_tokens(vocab_size); // Check if UnigramTrainer has this
+            trainer.train_from_files(files);
+            
+            // UnigramTrainer creates a new vocab, so we update ours
+            auto new_vocab = trainer.get_vocab();
+            if (new_vocab) {
+                // Copy entries to our vocab
+                // This is a bit inefficient, better if we could swap the shared_ptr
+                // but vocab_ is const in some contexts or shared.
+                // For now, let's assume we can just replace the content or the pointer if possible.
+                // Since vocab_ is shared_ptr<Vocab>, we can point it to the new one?
+                // But other components might hold references to the old one.
+                // Safer to clear and copy.
+                vocab_->clear();
+                // We need a way to iterate over new_vocab. Vocab class doesn't seem to expose iteration easily
+                // except via internal maps which are private.
+                // Actually, UnigramTrainer::get_vocab() returns a shared_ptr<Vocab>.
+                // If we can replace vocab_, that's best.
+                vocab_ = new_vocab;
+                
+                // Also update model scores
+                // model_->set_scores(...) // TokenizerModel needs a setter for scores
+            }
+        } else {
+            throw TokenizerException("Training is not supported for this algorithm.");
+        }
+        
+        // Re-initialize implementation with new vocab
+        if (tokenizer_impl_) {
+            tokenizer_impl_->set_vocab(vocab_);
+        }
+    }
+
+    void TokenizerAdvanced::set_normalization_form(NormalizationForm form) {
+        if (normalizer_) normalizer_->set_normalization_form(form);
+    }
+
+    void TokenizerAdvanced::set_strip_accents(bool strip) {
+        if (normalizer_) normalizer_->set_strip_accents(strip);
+    }
+
+    void TokenizerAdvanced::set_lowercase(bool lowercase) {
+        if (normalizer_) normalizer_->set_lowercase(lowercase);
+    }
+
+    void TokenizerAdvanced::add_pre_tokenizer_pattern(const std::string& pattern) {
+        auto regex_pre = std::dynamic_pointer_cast<RegexPreTokenizer>(pre_tokenizer_);
+        if (regex_pre) {
+            regex_pre->add_pattern(pattern);
+        }
+    }
+
+    void TokenizerAdvanced::create_bert_post_processor(bool add_special_tokens) {
+        if (vocab_) {
+            // We might want to update config based on add_special_tokens if needed
+            // For now, just create the processor
+            post_processor_ = std::make_shared<BertPostProcessor>(config_, *vocab_);
+        }
     }
 
 }

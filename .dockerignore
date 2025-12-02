@@ -1,0 +1,50 @@
+# Build artifacts - CRITICAL: Exclude to reduce context size
+**/target/
+**/*.whl
+**/*.so
+**/*.pyd
+**/*.dylib
+**/wheels/
+
+# Python
+**/__pycache__/
+**/*.py[cod]
+**/.venv/
+**/.wslenv/
+**/.pytest_cache/
+**/*.egg-info/
+**/dist/
+**/build/
+
+# Rust
+**/Cargo.lock
+**/*.rs.bk
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+**/.vs/
+
+# OS
+.DS_Store
+Thumbs.db
+**/*.log
+
+# Local config
+.env
+*.local
+
+# Git
+.git/
+.gitignore
+
+# Documentation (not needed for build)
+docs/
+*.md
+!README.md
+
+# Tests (copy only what's needed)
+**/test_*.py
+**/tests/*.py

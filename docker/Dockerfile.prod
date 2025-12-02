@@ -1,0 +1,21 @@
+# Production Dockerfile
+# Minimal image with only the built Python package
+
+FROM python:3.10-slim
+
+# Install runtime dependencies only
+RUN apt-get update && apt-get install -y \
+    libstdc++6 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy pre-built wheel
+COPY python/target/wheels/*.whl /tmp/
+
+# Install the package
+RUN pip install --no-cache-dir /tmp/*.whl && rm /tmp/*.whl
+
+# Set working directory
+WORKDIR /app
+
+# Default command
+CMD ["python3"]

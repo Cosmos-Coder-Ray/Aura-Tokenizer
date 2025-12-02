@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # Development environment
+  dev:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dev
+    volumes:
+      - ..:/workspace
+      - cargo-cache:/usr/local/cargo/registry
+      - target-cache:/workspace/rust/target
+    working_dir: /workspace
+    command: /bin/bash
+    stdin_open: true
+    tty: true
+
+  # Builder service
+  builder:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.builder
+      target: builder
+    volumes:
+      - ../python/target/wheels:/output
+    command: cp -r /build/python/target/wheels/* /output/
+
+  # Test runner
+  test:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dev
+    volumes:
+      - ..:/workspace
+    working_dir: /workspace
+    command: >
+      sh -c "
+        cd rust && cargo test &&
+        cd ../python && pytest tests/
+      "
+
+volumes:
+  cargo-cache:
+  target-cache:

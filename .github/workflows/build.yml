@@ -1,0 +1,140 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ created ]
+
+jobs:
+  # Rust crate build and test
+  rust-build:
+    name: Rust Build and Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      
+      - name: Cache Rust dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            rust/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      
+      - name: Build Rust crate
+        run: |
+          cd rust
+          cargo build --release
+      
+      - name: Run Rust tests
+        run: |
+          cd rust
+          cargo test --release
+      
+      - name: Run clippy
+        run: |
+          cd rust
+          cargo clippy -- -D warnings
+
+  # Python wheels build
+  build-wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Install maturin
+        run: pip install maturin
+      
+      - name: Build wheels
+        run: |
+          cd python
+          maturin build --release --out dist
+      
+      - name: Upload wheels
+        uses: actions/upload-artifact@v3
+        with:
+          name: wheels-${{ matrix.os }}
+          path: python/dist/*.whl
+
+  # Run Python tests
+  python-test:
+    name: Python Tests
+    needs: build-wheels
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.8', '3.9', '3.10', '3.11']
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      
+      - name: Download wheels
+        uses: actions/download-artifact@v3
+        with:
+          name: wheels-${{ matrix.os }}
+          path: python/dist
+      
+      - name: Install wheel
+        run: |
+          pip install pytest
+          pip install python/dist/*.whl
+      
+      - name: Run Python tests
+        run: |
+          cd python
+          pytest tests/ -v
+
+  # Publish to PyPI on release
+  publish-pypi:
+    name: Publish to PyPI
+    needs: [rust-build, build-wheels, python-test]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' && github.event.action == 'created'
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download all wheels
+        uses: actions/download-artifact@v3
+        with:
+          path: python/dist
+      
+      - name: Install maturin
+        run: pip install maturin
+      
+      - name: Publish to PyPI
+        env:
+          MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: |
+          cd python
+          maturin upload dist/*/*.whl

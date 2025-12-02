@@ -1,0 +1,97 @@
+Aura-Tokenizer/
+|-- .github/
+|-- Aura-Tokenizer/
+|   |-- Dependencies/
+|   |-- include/
+|   |   |-- auratokenizer_c_api.h
+|   |   |-- bpe_tokenizer.h
+|   |   |-- bpe_trainer.h
+|   |   |-- byte_level_pre_tokenizer.h
+|   |   |-- char_level_tokenizer.h
+|   |   |-- double_array_trie.h
+|   |   |-- ffi_types.h
+|   |   |-- icu_integration.h
+|   |   |-- icu_utils.h
+|   |   |-- offsets.h
+|   |   |-- plugin_registry.h
+|   |   |-- post_processor.h
+|   |   |-- pre_tokenizer.h
+|   |   |-- serialization_utils.h
+|   |   |-- streaming.h
+|   |   |-- template_parser.h
+|   |   |-- token.h
+|   |   |-- tokenizer_advanced.h
+|   |   |-- tokenizer_base_wasm.h
+|   |   |-- tokenizer_base.h
+|   |   |-- tokenizer_config.h
+|   |   |-- tokenizer_core.h
+|   |   |-- tokenizer_encoder.h
+|   |   |-- tokenizer_exception.h
+|   |   |-- tokenizer_json_parser.h
+|   |   |-- tokenizer_model.h
+|   |   |-- tokenizer_python.h
+|   |   |-- tokenizer_trainer.h
+|   |   |-- tokenizer_types.h
+|   |   |-- tokenizer_wasm.h
+|   |   |-- trie.h
+|   |   |-- unicode_normalizer.h
+|   |   |-- unigram_tokenizer.h
+|   |   |-- unigram_trainer.h
+|   |   |-- utf8_utils.h
+|   |   |-- utils.h
+|   |   |-- vector_conversions.h
+|   |   |-- vocab.h
+|   |   |-- wordpiece_model.h
+|   |   `-- wordpiece_tokenizer.h
+|   |-- src/
+|   |   |-- bpe_tokenizer.cpp
+|   |   |-- bpe_trainer.cpp
+|   |   |-- byte_level_pre_tokenizer.cpp
+|   |   |-- char_level_tokenizer.cpp
+|   |   |-- double_array_trie.cpp
+|   |   |-- icu_integration.cpp
+|   |   |-- icu_utils.cpp
+|   |   |-- offsets.cpp
+|   |   |-- plugin_registry.cpp
+|   |   |-- post_processor.cpp
+|   |   |-- pre_tokenizer.cpp
+|   |   |-- serialization_utils.cpp
+|   |   |-- streaming.cpp
+|   |   |-- template_parser.cpp
+|   |   |-- tokenizer_advanced.cpp
+|   |   |-- tokenizer_base.cpp
+|   |   |-- tokenizer_config.cpp
+|   |   |-- tokenizer_core.cpp
+|   |   |-- tokenizer_encoder.cpp
+|   |   |-- tokenizer_json_parser.cpp
+|   |   |-- tokenizer_model.cpp
+|   |   |-- tokenizer_python.cpp
+|   |   |-- tokenizer_types.cpp
+|   |   |-- tokenizer_wasm.cpp
+|   |   |-- trie.cpp
+|   |   |-- unicode_normalizer.cpp
+|   |   |-- unigram_tokenizer.cpp
+|   |   |-- unigram_trainer.cpp
+|   |   |-- utf8_utils.cpp
+|   |   |-- vector_conversions.cpp
+|   |   |-- vocab.cpp
+|   |   |-- wordpiece_model.cpp
+|   |   `-- wordpiece_tokenizer.cpp
+|   |-- tests/
+|   |-- .gitignore
+|   |-- build_wasm.bat
+|   |-- build_wasm.ps1
+|   |-- build_wasm.sh
+|   |-- CMakeLists.txt
+|   |-- CMakePresets.json
+|   |-- output.log
+|   `-- setup_emscripten.bat
+|-- docs/
+|-- .gitignore
+|-- codecov.yml
+|-- LICENSE
+|-- MANIFEST.in
+|-- plan.txt
+|-- Prompt.txt
+|-- README.md
+`-- vc140.pdb

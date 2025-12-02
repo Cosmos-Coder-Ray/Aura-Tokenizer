@@ -27,6 +27,7 @@
         "regex": "cpp",
         "numeric": "cpp",
         "queue": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "exception": "cpp"
     }
 }

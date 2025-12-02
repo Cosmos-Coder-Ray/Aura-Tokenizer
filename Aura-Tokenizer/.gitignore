@@ -4,3 +4,7 @@ Dependencies/
 .vs/*
 .vscode/
 output.log
+out/
+vc140.pdb
+CMakeLists.txt
+CMakePresets.json

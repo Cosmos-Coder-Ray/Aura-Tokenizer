@@ -1,0 +1,42 @@
+# Development Dockerfile
+# For building and testing the tokenizer in a containerized environment
+
+FROM rust:latest-slim
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    python3 \
+    python3-dev \
+    python3-pip \
+    python3-venv \
+    libicu-dev \
+    git \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python build tools (use --break-system-packages for Docker)
+RUN pip3 install --no-cache-dir --break-system-packages \
+    maturin \
+    pytest \
+    black \
+    ruff
+
+# Create working directory
+WORKDIR /workspace
+
+# Copy project files
+COPY . .
+
+# Build Rust crate
+RUN cd rust && cargo build --release
+
+# Build Python package
+RUN cd python && maturin build --release
+
+# Install the built wheel
+RUN pip3 install python/target/wheels/*.whl
+
+# Set default command
+CMD ["/bin/bash"]
